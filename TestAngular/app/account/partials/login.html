@@ -1,0 +1,18 @@
+﻿<div ng-controller="test.user.login">
+    <form class="col-md-offset-4 col-md-3 col-sm-offset-3 col-sm-3" role="form">
+        <h2 class="form-signin-heading">Please Login</h2>
+        <div class="form-group">
+            <label for="userId">User Id</label>
+            <input type="text" class="form-control" id="userId" placeholder="User Id" required="You must Enter User Id"
+                   autofocus=""
+                   ng-model="username">
+        </div>
+        <div class="form-group">
+            <label for="exampleInputPassword1">Password</label>
+            <input type="password" class="form-control" id="inputPassword" placeholder="Password"
+                   required="You must Enter password"
+                   ng-model="password">
+        </div>
+        <button id="login" type="submit" class="btn btn-lg btn-block btn-primary" ng-click="login()">Sign in</button>
+    </form>
+</div>

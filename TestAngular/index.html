@@ -1,0 +1,52 @@
+﻿<!DOCTYPE html>
+<html id="ng-app" ng-app="testApp" ng-strict-di>
+<head>
+    <title></title>
+    <base href="/index.html">
+    <meta charset="utf-8" />
+
+    <link href="Content/bootstrap.css" rel="stylesheet" />
+    <link href="Content/pnotify.custom.min.css" rel="stylesheet" />
+    <!--<link href="app/assets/navigation.css" rel="stylesheet" />-->
+
+    <script src="Scripts/jquery-2.1.4.min.js"></script>
+    <script src="Scripts/angular.min.js"></script>
+    <script src="Scripts/bootstrap.min.js"></script>
+    <script src="lib/pnotify.custom.min.js"></script>
+    <script src="Scripts/angular-animate.min.js"></script>
+    <script src="Scripts/angular-messages.min.js"></script>
+    <script src="Scripts/angular-sanitize.min.js"></script>
+    <script src="Scripts/angular-ui/ui-bootstrap-tpls.min.js"></script>
+    <script src="Scripts/angular-ui-router.js"></script>
+
+
+    <script src="app/common/common.js"></script>
+    <!--<script src="app/common/factories/notify.js"></script>-->
+    <script src="app/common/factories/log.js"></script>
+    <script src="app/common/factories/helper.js"></script>
+    <script src="app/common/factories/webapi.js"></script>
+    <script src="app/common/factories/notify.js"></script>
+
+</head>
+<body>
+    <div ui-view="navContainerView"></div>
+    <div class="container-fluid main-container">
+        <div class="row">
+            <div class="col-md-12 " ui-view="mainContainerView"></div>
+        </div>
+    </div>
+    <script src="app/app.js"></script>
+   
+    <script src="app/config.js"></script>
+    <script src="app/config.route.js"></script>
+    <script src="app/exceptionHandler.js"></script>
+    <script src="app/account/factories/test.user.userService.js"></script>
+    <!--<script src="app/account/test.user.userService.js"></script>
+    <script src="app/layout/topnav.js"></script>
+   -->
+    <script src="app/layout/topnav.js"></script>
+    <script src="app/account/controller/test.user.login.js"></script>
+    <!--<script src="app/exceptionHandler.js"></script>-->
+
+</body>
+</html>
