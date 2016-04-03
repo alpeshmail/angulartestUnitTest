@@ -1,4 +1,10 @@
 module.exports = function (grunt) {
+    var configFile = grunt.file.readJSON('config.json'),
+        sourceFiles = configFile.sourceFiles, 
+        tempSrc = sourceFiles.concat(configFile.accountSource);
+
+    
+
     grunt.initConfig({
         pkg: grunt.file.readJSON("package.json"),
         config: grunt.file.readJSON('config.json'),
@@ -30,7 +36,8 @@ module.exports = function (grunt) {
                 files: [
                   {
                       dest: 'buildout/fullVersion/output/amsclient.js',
-                      src: '<%= config.sourceFiles %>',
+                      src: tempSrc,
+                     // src: '<%= config.sourceFiles %>',
                       //src: [
                       //  'app/app.js',
                       //  'app/config.js',
@@ -70,5 +77,6 @@ module.exports = function (grunt) {
     //grunt.loadNpmTasks("grunt-contrib-htmlmin");
     //grunt.loadNpmTasks("grunt-contrib-cssmin");
     //grunt.registerTask("default", ['concat', 'uglify']);
-    grunt.registerTask("default", ['clean', 'copy', 'concat','uglify']);
+    //grunt.registerTask("default", ['clean', 'copy', 'concat', 'uglify']);
+    grunt.registerTask("default", ['clean',  'concat', 'uglify']);
 };

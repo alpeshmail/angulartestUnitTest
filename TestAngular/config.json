@@ -1,10 +1,11 @@
 ﻿{
   "sourceFiles": [
-        "app/app.js",
-        "app/config.js",
-        "app/config.route.js",
-        "app/exceptionHandler.js",
-        "app/common/**/*.js",
-       "!app/common/Gruntfile.js"
-  ]
+    "app/common/**/*.js",
+    "app/app.js",
+    "app/config.js",
+    "app/config.route.js",
+    "app/exceptionHandler.js",
+    "!app/common/Gruntfile.js"
+  ],
+  "accountSource": [ "app/account/**/*.js" ]
 }

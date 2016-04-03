@@ -1,208 +1,5 @@
 (function () {
     'use strict';
-    angular.module('testApp', []);
-    angular.module('testApp', [
-            'ngSanitize',
-            'ngAnimate',
-            'ngMessages',
-            'ui.router',
-            'ui.bootstrap',
-            'common'
-    ]
-    );
-}());
-(function () {
-    'use strict';
-    PNotify.prototype.options.styling = "bootstrap3";
-    PNotify.prototype.options.delay = 3000;
-    PNotify.prototype.options.nonblock = true;
-    PNotify.prototype.options.history = false;
-    PNotify.prototype.options.type = 'info';
-    var testAppVar = angular.module('testApp');
-    var config = {
-        docTitle: 'Test APP: ',
-        baseServiceUrl: 'api'
-    };
-    testAppVar.value('config', config);
-    testAppVar.config(['$httpProvider', '$locationProvider', function ($httpProvider, $locationProvider) {
-        $httpProvider.defaults.withCredentials = true;
-        //$locationProvider.hashPrefix();
-        //$locationProvider.html5Mode(false);
-        $httpProvider.interceptors.push('authInterceptorService');
-    }]);
-    //testAppVar.config(['datepickerConfig', function (datepickerConfig) {
-    //    datepickerConfig.maxDate = '2099-01-01';
-    //    datepickerConfig.minDate = 'minDate';
-    //    datepickerConfig.datepickerOptions = 'dateOptions';
-    //    datepickerConfig.closeText = 'Close';
-    //    datepickerConfig.dateDisabled = 'disabled(date, mode)';
-    //}]);
-    testAppVar.config(['$compileProvider', '$logProvider', function ($compileProvider, $logProvider) {
-        $compileProvider.debugInfoEnabled(false);
-        $logProvider.debugEnabled(false);
-    }]);
-    testAppVar.factory('authInterceptorService',
-        ['$q',
-            '$injector',
-            'common.notify',
-            function ($q, $injector, notify) {
-                var authInterceptorServiceFactory = {};
-                var _responseError = function (rejection) {
-                    if (rejection.status === 401) {
-                        notify.open({
-                            title: 'Authentication Failed:',
-                            text: 'User is not logged in, redirecting to Login page',
-                            type: 'error',
-                            nonblock: false,
-                            width: '40%'
-                        });
-                        $injector.get('$state').go('login', {}, { reload: true });
-                    }
-                    else if (rejection.status === 403) {
-                        notify.open({
-                            title: 'Authorization Failed:',
-                            text: 'User is not entitle to content.',
-                            type: 'error',
-                            nonblock: false,
-                            width: '40%'
-                        });
-                        $injector.get('$state').go('test.unauthorized', {}, { reload: true });
-                    }
-                    else {
-                        notify.open({
-                            title: 'An error occurred:',
-                            text: rejection.data.errorMessage,
-                            type: 'error',
-                            nonblock: false,
-                            width: '40%'
-                        });
-                    }
-                    return $q.reject(rejection);
-                };
-                authInterceptorServiceFactory.responseError = _responseError;
-                return authInterceptorServiceFactory;
-            }]);
-}());
-(function () {
-    'use strict';
-    var testAppVar = angular.module('testApp');
-    testAppVar.config(['$stateProvider',
-      '$urlRouterProvider',
-      '$locationProvider',
-    function ($stateProvider, $urlRouterProvider, $locationProvider) {
-
-        //$locationProvider.html5Mode({
-        //    enabled: true,
-        //    requireBase: true
-        //});
-
-        $stateProvider.state('test',
-            {
-            url: '/', views: {
-                'navContainerView': { templateUrl: 'app/layout/topnav.html' }
-            }, data: { title: 'Home', role: 'testUser' }, resolve: {
-                userSession: ['test.user.userService', function (userService) {
-                    return userService.isAuthenticated(this.name).then(function () {
-                        return true;
-                    });
-                }]
-            }
-        });
-        //$stateProvider.state('test.changePassword', { url: 'changePassword', views: { 'mainContainerView@': { templateUrl: 'app/account/partials/changePassword.html' } }, data: { title: 'Modify Password' } });
-        $stateProvider.state('login', {
-            url: '/login', views: { 'mainContainerView': { templateUrl: 'app/account/partials/login.html' } },
-            data: { title: 'Login' },
-            authenticate: false
-        });
-        //$stateProvider.state('test.account', { url: 'account', views: { 'mainContainerView@': { templateUrl: 'app/account/account.html' } }, data: { title: 'User Account' } });
-        $stateProvider.state('test.unauthorized', {
-            url: 'unauthorized', views: { 'mainContainerView@': { templateUrl: 'app/error.html' } }
-            , data: { title: 'Unauthorized Access' }
-            , authenticate: true
-        });
-        $urlRouterProvider.otherwise('/');
-        //if ($window.history && $window.history.pushState) {
-        //    $locationProvider.html5Mode(true);
-        //}
-    }
-    ]);
-    testAppVar.run([
-      '$rootScope',
-      '$state',
-    
-      function ($rootScope, $state) {
-
-          //$rootScope.$on('$stateChangeStart', function (event, toState, toParams) {
-          //    if (!userInfo.isAuthenticated)
-          //    {
-          //        $state.go('login', {}, { reload: true });
-          //    }
-          //    //var userInfo = authService.getUserInfo();
-          //    //if (!userInfo.isAuthenticated && authenticate) {
-          //    //    $rootScope.returnToState = toState.url;
-          //    //    $rootScope.returnToStateParams = toParams.Id;
-          //    //   // $location.path('/login');
-                
-          //    //}
-              
-          //});
-
-          $rootScope.$on('$stateChangeStart', function (event, toState, toStateParams) {
-
-              //var isLogin = toState.name === "login";
-
-              //if (isLogin) {
-
-              //    return; // no need to redirect anymore 
-              //}
-
-              if (toState.url === "/") {
-                 // $state.go('login', {}, { reload: true });
-                  $state.go('login');
-                  event.preventDefault();
-              }
-             // console.log("test" + toStateParams.toState);
-              // track the state the user wants to go to; authorization service needs this
-              //
-              //$rootScope.toState = toState;
-              //$rootScope.toStateParams = toStateParams;
-              //// if the principal is resolved, do an authorization check immediately. otherwise,
-              //// it'll be done when the state it resolved.
-              //if (principal.isIdentityResolved()) authorization.authorize();
-          });
-          $rootScope.$on('$stateChangeError', function (event, toState, toParams, fromState, fromParams, error) {
-             // $state.go('login', {}, { reload: true });
-             // $state.go('login', {}, { reload: true });
-              if (error.name === 'AuthenticationRequired') {
-                  userService.setNextState(toState.name, 'You must login to access this page');
-                  $state.go('login', {}, { reload: true });
-              }
-          });
-          $rootScope.$on('$stateChangeSuccess', function (event, toState, toParams, fromState, fromParams) {
-              if (angular.isDefined(toState.data.role) && !userService.hasRole(toState.data.role)) {
-                  $state.go('test.unauthorized', {}, { reload: true });
-              }
-              if (angular.isDefined(toState.data.title)) {
-                  $rootScope.title = 'test 2.0 -- '.concat(toState.data.title);
-              }
-          });
-      }
-    ]);
-}());
-(function () {
-    'use strict';
-    angular.module('testApp').factory('$exceptionHandler',
-      ['common.notify',
-        'common.factories.log',
-        function (notify, log) {
-            return function (e/*, cause*/) {
-                log.error(e);
-                notify.open({ title: 'An error occurred:', text: e.toString(), type: 'error', nonblock: false, width: '40%' });
-            };
-        }]);
-}());
-(function () {
-    'use strict';
     var commonModule =angular.module('common', []);
 
     // Must configure the common service and set its 
@@ -478,5 +275,405 @@
                 return deferred.promise;
             };
             return { call: _call };
+        }]);
+}());
+(function () {
+    'use strict';
+    angular.module('testApp', []);
+    angular.module('testApp', [
+            'ngSanitize',
+            'ngAnimate',
+            'ngMessages',
+            'ui.router',
+            'ui.bootstrap',
+            'common'
+    ]
+    );
+}());
+(function () {
+    'use strict';
+    PNotify.prototype.options.styling = "bootstrap3";
+    PNotify.prototype.options.delay = 3000;
+    PNotify.prototype.options.nonblock = true;
+    PNotify.prototype.options.history = false;
+    PNotify.prototype.options.type = 'info';
+    var testAppVar = angular.module('testApp');
+    var config = {
+        docTitle: 'Test APP: ',
+        baseServiceUrl: 'api'
+    };
+    testAppVar.value('config', config);
+    testAppVar.config(['$httpProvider', '$locationProvider', function ($httpProvider, $locationProvider) {
+        $httpProvider.defaults.withCredentials = true;
+        //$locationProvider.hashPrefix();
+        //$locationProvider.html5Mode(false);
+        $httpProvider.interceptors.push('authInterceptorService');
+    }]);
+    //testAppVar.config(['datepickerConfig', function (datepickerConfig) {
+    //    datepickerConfig.maxDate = '2099-01-01';
+    //    datepickerConfig.minDate = 'minDate';
+    //    datepickerConfig.datepickerOptions = 'dateOptions';
+    //    datepickerConfig.closeText = 'Close';
+    //    datepickerConfig.dateDisabled = 'disabled(date, mode)';
+    //}]);
+    testAppVar.config(['$compileProvider', '$logProvider', function ($compileProvider, $logProvider) {
+        $compileProvider.debugInfoEnabled(false);
+        $logProvider.debugEnabled(false);
+    }]);
+    testAppVar.factory('authInterceptorService',
+        ['$q',
+            '$injector',
+            'common.notify',
+            function ($q, $injector, notify) {
+                var authInterceptorServiceFactory = {};
+                var _responseError = function (rejection) {
+                    if (rejection.status === 401) {
+                        notify.open({
+                            title: 'Authentication Failed:',
+                            text: 'User is not logged in, redirecting to Login page',
+                            type: 'error',
+                            nonblock: false,
+                            width: '40%'
+                        });
+                        $injector.get('$state').go('login', {}, { reload: true });
+                    }
+                    else if (rejection.status === 403) {
+                        notify.open({
+                            title: 'Authorization Failed:',
+                            text: 'User is not entitle to content.',
+                            type: 'error',
+                            nonblock: false,
+                            width: '40%'
+                        });
+                        $injector.get('$state').go('test.unauthorized', {}, { reload: true });
+                    }
+                    else {
+                        notify.open({
+                            title: 'An error occurred:',
+                            text: rejection.data.errorMessage,
+                            type: 'error',
+                            nonblock: false,
+                            width: '40%'
+                        });
+                    }
+                    return $q.reject(rejection);
+                };
+                authInterceptorServiceFactory.responseError = _responseError;
+                return authInterceptorServiceFactory;
+            }]);
+}());
+(function () {
+    'use strict';
+    var testAppVar = angular.module('testApp');
+    testAppVar.config(['$stateProvider',
+      '$urlRouterProvider',
+      '$locationProvider',
+    function ($stateProvider, $urlRouterProvider, $locationProvider) {
+
+        //$locationProvider.html5Mode({
+        //    enabled: true,
+        //    requireBase: true
+        //});
+
+        $stateProvider.state('test',
+            {
+            url: '/', views: {
+                'navContainerView': { templateUrl: 'app/layout/topnav.html' }
+            }, data: { title: 'Home', role: 'testUser' }, resolve: {
+                userSession: ['test.user.userService', function (userService) {
+                    return userService.isAuthenticated(this.name).then(function () {
+                        return true;
+                    });
+                }]
+            }
+        });
+        //$stateProvider.state('test.changePassword', { url: 'changePassword', views: { 'mainContainerView@': { templateUrl: 'app/account/partials/changePassword.html' } }, data: { title: 'Modify Password' } });
+        $stateProvider.state('login', {
+            url: '/login', views: { 'mainContainerView': { templateUrl: 'app/account/partials/login.html' } },
+            data: { title: 'Login' },
+            authenticate: false
+        });
+        //$stateProvider.state('test.account', { url: 'account', views: { 'mainContainerView@': { templateUrl: 'app/account/account.html' } }, data: { title: 'User Account' } });
+        $stateProvider.state('test.unauthorized', {
+            url: 'unauthorized', views: { 'mainContainerView@': { templateUrl: 'app/error.html' } }
+            , data: { title: 'Unauthorized Access' }
+            , authenticate: true
+        });
+        $urlRouterProvider.otherwise('/');
+        //if ($window.history && $window.history.pushState) {
+        //    $locationProvider.html5Mode(true);
+        //}
+    }
+    ]);
+    testAppVar.run([
+      '$rootScope',
+      '$state',
+    
+      function ($rootScope, $state) {
+
+          //$rootScope.$on('$stateChangeStart', function (event, toState, toParams) {
+          //    if (!userInfo.isAuthenticated)
+          //    {
+          //        $state.go('login', {}, { reload: true });
+          //    }
+          //    //var userInfo = authService.getUserInfo();
+          //    //if (!userInfo.isAuthenticated && authenticate) {
+          //    //    $rootScope.returnToState = toState.url;
+          //    //    $rootScope.returnToStateParams = toParams.Id;
+          //    //   // $location.path('/login');
+                
+          //    //}
+              
+          //});
+
+          $rootScope.$on('$stateChangeStart', function (event, toState, toStateParams) {
+
+              //var isLogin = toState.name === "login";
+
+              //if (isLogin) {
+
+              //    return; // no need to redirect anymore 
+              //}
+
+              if (toState.url === "/") {
+                 // $state.go('login', {}, { reload: true });
+                  $state.go('login');
+                  event.preventDefault();
+              }
+             // console.log("test" + toStateParams.toState);
+              // track the state the user wants to go to; authorization service needs this
+              //
+              //$rootScope.toState = toState;
+              //$rootScope.toStateParams = toStateParams;
+              //// if the principal is resolved, do an authorization check immediately. otherwise,
+              //// it'll be done when the state it resolved.
+              //if (principal.isIdentityResolved()) authorization.authorize();
+          });
+          $rootScope.$on('$stateChangeError', function (event, toState, toParams, fromState, fromParams, error) {
+             // $state.go('login', {}, { reload: true });
+             // $state.go('login', {}, { reload: true });
+              if (error.name === 'AuthenticationRequired') {
+                  userService.setNextState(toState.name, 'You must login to access this page');
+                  $state.go('login', {}, { reload: true });
+              }
+          });
+          $rootScope.$on('$stateChangeSuccess', function (event, toState, toParams, fromState, fromParams) {
+              if (angular.isDefined(toState.data.role) && !userService.hasRole(toState.data.role)) {
+                  $state.go('test.unauthorized', {}, { reload: true });
+              }
+              if (angular.isDefined(toState.data.title)) {
+                  $rootScope.title = 'test 2.0 -- '.concat(toState.data.title);
+              }
+          });
+      }
+    ]);
+}());
+(function () {
+    'use strict';
+    angular.module('testApp').factory('$exceptionHandler',
+      ['common.notify',
+        'common.factories.log',
+        function (notify, log) {
+            return function (e/*, cause*/) {
+                log.error(e);
+                notify.open({ title: 'An error occurred:', text: e.toString(), type: 'error', nonblock: false, width: '40%' });
+            };
+        }]);
+}());
+(function () {
+    'use strict';
+    angular.module('testApp').controller('test.user.login',
+	  ['$scope',
+		'$state',
+		//'test.user.userService',
+		function ($scope, $state) {
+		    //var vm = this;
+		    //$scope.username = '';
+		    //$scope.password = '';
+		    //$scope.errors = [];
+		    //$scope.isLoginButtonDisabled = false;
+		    //vm.userServiceLocal = userService;
+		    //var nextState = null;
+		    //try {
+		    //	nextState = vm.userServiceLocal.getNextState();
+		    //} catch (e) {
+		    //	nextState = null;
+		    //}
+		    //if (nextState !== null) {
+		    //	var nameBuffer = nextState.name;
+		    //	var errorBuffer = nextState.error;
+		    //	vm.userServiceLocal.clearNextState();
+		    //	nextState = {
+		    //		name: nameBuffer,
+		    //		error: errorBuffer
+		    //	};
+		    //	if (typeof nextState.error === 'string' && nextState.error !== '' && $scope.errors.indexOf(nextState.error) === -1) {
+		    //		$scope.errors.push(nextState.error);
+		    //	} else {
+		    //		$scope.errors.push('You must be logged in to view this page');
+		    //	}
+		    //}
+		    //$scope.isErrorDialogVisible = false;
+		    //vm.title = 'login';
+		    //function disableLoginButton() {
+		    //	$scope.isLoginButtonDisabled = true;
+		    //}
+
+		    //function enableLoginButton() {
+		    //	$scope.isLoginButtonDisabled = false;
+		    //}
+
+		    //function onSuccessfulLogin() {
+		    //	if (nextState !== null && typeof nextState.name === 'string' && nextState.name !== '') {
+		    //		$state.go(nextState.name, nextState.params);
+		    //	} else {
+		    //		$state.go('test');
+		    //	}
+		    //}
+
+		    //$scope.login = function () {
+		    //	disableLoginButton();
+		    //    //vm.userServiceLocal.authenticate($scope.username, $scope.password, onSuccessfulLogin);
+		    //	onSuccessfulLogin();
+		    //};
+		}]);
+}());
+(function () {
+    'use strict';
+    angular.module('testApp').factory('test.user.userService',
+      [
+       // 'common.factories.webApi',
+        //'common',
+        '$q',
+        '$rootScope',
+        '$state',
+        'common.factories.webApi',
+        function ($q, $rootScope, $state, webapi) {
+            var _getUserInfo, _authenticate, _setNextState, _isAuthenticated, _getNextState, _clearNextState,
+              _hasRole, _logoff;
+            var userInfo = {
+                isAuthenticated: false,
+                firstName: undefined,
+                lastName: undefined,
+                email: undefined,
+                userName: undefined,
+                roles: undefined
+            };
+            var nextState = {
+                name: '',
+                error: ''
+            };
+
+            function setuserInfo(data) {
+                userInfo.isAuthenticated = true;
+                userInfo.lastName = data.LastName;
+                userInfo.firstName = data.FirstName;
+                userInfo.email = data.Email;
+                userInfo.userName = data.UserName;
+                userInfo.roles = data.RolesList;
+                $rootScope.$broadcast('rolesChanged');
+            }
+
+            function NextStateUndefinedException(message) {
+                nextState.name = 'NextStateUndefined';
+                nextState.message = message;
+            }
+
+            function resetuserInfo() {
+                userInfo.isAuthenticated = false;
+                userInfo.lastName = undefined;
+                userInfo.firstName = undefined;
+                userInfo.email = undefined;
+                userInfo.userName = undefined;
+                userInfo.roles = undefined;
+                $rootScope.$broadcast('rolesChanged');
+            }
+
+            _getUserInfo = function () {
+                return userInfo;
+            };
+            _authenticate = function (username, password, successCallback) {
+                var request = {
+                    url: common.constructUrl('Account/login'),
+                    method: 'POST',
+                    data: {
+                        UserName: username,
+                        password: password
+                    }
+                };
+                webApi.call(request).then(function (data) {
+                    setuserInfo(data);
+                    localStorage.setItem("CsrfToken", data.CsrfToken);
+                    if (typeof successCallback === 'function') {
+                        successCallback();
+                    }
+                });
+            };
+            _logoff = function () {
+                var request = {
+                    url: common.constructUrl('Account/logout'),
+                    method: 'POST'
+                };
+                webApi.call(request).then(function () {
+                    resetuserInfo();
+                    $state.go('login', {}, { reload: true });
+                });
+            };
+            _setNextState = function (name, error) {
+                nextState.name = name;
+                nextState.error = error;
+            };
+            _isAuthenticated = function (stateName) {
+                //First Check if user is already logged in
+                if (userInfo.isAuthenticated) {
+                    var deferred = $q.defer();
+                    var promise = deferred.promise;
+                    deferred.resolve();
+                    return promise.then(function success() {
+                        return true;
+                    });
+                }
+                //if user is not logged in, check with server, if user has already open session
+                var request = {
+                    url: common.constructUrl('Account/UserInfo'),
+                    method: 'GET'
+                };
+                if (nextState.name === '') {
+                    _setNextState(stateName, 'You must re-login to continue');
+                }
+                return webApi.call(request).then(function (data) {
+                    setuserInfo(data);
+                    return true;
+                });
+            };
+            _getNextState = function () {
+                if (nextState.name === '') {
+                    throw new NextStateUndefinedException('No state data was set');
+                }
+                return nextState;
+            };
+            _clearNextState = function () {
+                nextState.name = '';
+                nextState.error = '';
+            };
+            _hasRole = function (role) {
+                var hasRole = false;
+                angular.forEach(userInfo.roles, function (item) {
+                    if (item === role) {
+                        hasRole = true;
+                    }
+                });
+                return hasRole;
+            };
+            return {
+                getUserInfo: _getUserInfo,
+                authenticate: _authenticate,
+                isAuthenticated: _isAuthenticated,
+                setNextState: _setNextState,
+                clearNextState: _clearNextState,
+                getNextState: _getNextState,
+                hasRole: _hasRole,
+                logoff: _logoff
+            };
         }]);
 }());

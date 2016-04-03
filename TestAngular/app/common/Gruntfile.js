@@ -65,5 +65,6 @@ module.exports = function (grunt) {
     //grunt.loadNpmTasks("grunt-contrib-htmlmin");
     //grunt.loadNpmTasks("grunt-contrib-cssmin");
     //grunt.registerTask("default", ['concat', 'uglify']);
-    grunt.registerTask("default", ['clean', 'copy', 'concat', 'uglify']);
+    //grunt.registerTask("default", ['clean', 'copy', 'concat', 'uglify']);
+    grunt.registerTask("default", ['clean', 'concat', 'uglify']);
 };
