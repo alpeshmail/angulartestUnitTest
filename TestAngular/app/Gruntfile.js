@@ -1,39 +1,44 @@
-﻿/// <reference path="F:\Alpesh\TestProject\TestAngular\TestAngular\app/app.js" />
-/// <reference path="F:\Alpesh\TestProject\TestAngular\TestAngular\app/app.js" />
-/// <binding Clean='default' />
 module.exports = function (grunt) {
     grunt.initConfig({
         pkg: grunt.file.readJSON("package.json"),
+        config: grunt.file.readJSON('config.json'),
         clean: {
             build: {
                 options: {
                     force: true
                 },
                 src: ["wwwroot",
-                    "buildout/common/"
+                    "buildout/fullVersion"
                 ]
             }
         }
-        ,copy: {
+        ,
+        copy: {
             nonJsCssFiles: {
                 expand: true,
                 src: [
-                  "app/common/**/*.js",
+                  "lib/**",
+                  "app/*.*",
+                  "buildout/common/output/common.js",
                   "!*.json"
                 ],
-                dest: "buildout/common/"
+                dest: "buildout/fullVersion/"
             }
         },
         concat: {
             generated: {
                 files: [
                   {
-                      dest: 'buildout/common/output/common.js',
-                      //src: [ "buildout/common/*.js"]
-                      src: ["app/common/**/*.js",
-                           "!app/common/Gruntfile.js",
-                          "!*.json"
-                      ],
+                      dest: 'buildout/fullVersion/output/amsclient.js',
+                      src: '<%= config.sourceFiles %>',
+                      //src: [
+                      //  'app/app.js',
+                      //  'app/config.js',
+                      //  'app/config.route.js',
+                      //  'app/exceptionHandler.js',
+                      //  "app/common/**/*.js",
+                      //  "!app/common/Gruntfile.js",
+                      //]
                   }
                 ]
             }
@@ -42,8 +47,8 @@ module.exports = function (grunt) {
             generated: {
                 files: [
                   {
-                      dest: 'buildout/common/output/common.min.js',
-                      src: ['buildout/common/output/common.js']
+                      dest: 'buildout/fullVersion/output/amsclient.min.js',
+                      src: ['buildout/fullVersion/output/amsclient.js']
                   }
                 ]
             }
@@ -60,10 +65,10 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks("grunt-contrib-uglify");
     grunt.loadNpmTasks("grunt-contrib-concat");
     //grunt.loadNpmTasks("grunt-usemin");
-    // grunt.loadNpmTasks("grunt-angular-template-inline-js");
+   // grunt.loadNpmTasks("grunt-angular-template-inline-js");
     grunt.loadNpmTasks("grunt-contrib-copy");
     //grunt.loadNpmTasks("grunt-contrib-htmlmin");
     //grunt.loadNpmTasks("grunt-contrib-cssmin");
     //grunt.registerTask("default", ['concat', 'uglify']);
-    grunt.registerTask("default", ['clean', 'copy', 'concat', 'uglify']);
+    grunt.registerTask("default", ['clean', 'copy', 'concat','uglify']);
 };

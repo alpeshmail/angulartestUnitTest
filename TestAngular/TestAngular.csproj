@@ -71,6 +71,7 @@
     <Content Include="app\account\factories\test.user.userService.js" />
     <Content Include="app\common\Gruntfile.js" />
     <Content Include="app\exceptionHandler.js" />
+    <Content Include="app\Gruntfile.js" />
     <Content Include="app\layout\topnav.html" />
     <Content Include="app\layout\topnav.js" />
     <Content Include="Gruntfile.js" />
@@ -94,6 +95,7 @@
     <None Include=".bin\bower.cmd" />
     <None Include=".bin\git.cmd" />
     <None Include=".bin\node.cmd" />
+    <Content Include="config.json" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

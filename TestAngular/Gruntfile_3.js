@@ -1,4 +1,4 @@
-﻿/// <reference path="F:\Alpesh\TestProject\TestAngular\TestAngular\app/app.js" />
+/// <reference path="F:\Alpesh\TestProject\TestAngular\TestAngular\app/app.js" />
 /// <reference path="F:\Alpesh\TestProject\TestAngular\TestAngular\app/app.js" />
 /// <binding Clean='default' />
 module.exports = function (grunt) {
@@ -10,30 +10,33 @@ module.exports = function (grunt) {
                     force: true
                 },
                 src: ["wwwroot",
-                    "buildout/common/"
+                    "buildout/staging"
                 ]
             }
         }
-        ,copy: {
+        ,
+        copy: {
             nonJsCssFiles: {
                 expand: true,
                 src: [
-                  "app/common/**/*.js",
+                  "lib/**",
+                  "app/*.*",
                   "!*.json"
                 ],
-                dest: "buildout/common/"
+                dest: "buildout/staging/"
             }
         },
         concat: {
             generated: {
                 files: [
                   {
-                      dest: 'buildout/common/output/common.js',
-                      //src: [ "buildout/common/*.js"]
-                      src: ["app/common/**/*.js",
-                           "!app/common/Gruntfile.js",
-                          "!*.json"
-                      ],
+                      dest: 'buildout/dis/testapp.js',
+                      src: [
+                        'app/app.js',
+                        'app/config.js',
+                        'app/config.route.js',
+                        'app/exceptionHandler.js'
+                      ]
                   }
                 ]
             }
@@ -42,8 +45,8 @@ module.exports = function (grunt) {
             generated: {
                 files: [
                   {
-                      dest: 'buildout/common/output/common.min.js',
-                      src: ['buildout/common/output/common.js']
+                      dest: 'buildout/dis/testapp.min.js',
+                      src: ['buildout/dis/testapp.js']
                   }
                 ]
             }
@@ -60,10 +63,10 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks("grunt-contrib-uglify");
     grunt.loadNpmTasks("grunt-contrib-concat");
     //grunt.loadNpmTasks("grunt-usemin");
-    // grunt.loadNpmTasks("grunt-angular-template-inline-js");
+   // grunt.loadNpmTasks("grunt-angular-template-inline-js");
     grunt.loadNpmTasks("grunt-contrib-copy");
     //grunt.loadNpmTasks("grunt-contrib-htmlmin");
     //grunt.loadNpmTasks("grunt-contrib-cssmin");
     //grunt.registerTask("default", ['concat', 'uglify']);
-    grunt.registerTask("default", ['clean', 'copy', 'concat', 'uglify']);
+    grunt.registerTask("default", ['clean', 'copy', 'concat','uglify']);
 };
